@@ -16,11 +16,11 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        User::create([
-            'name' => 'Nguyen Van A',
-            'email' => 'student1@gmail.com',
+       User::create([
+            'name' => 'Quản trị viên Hệ thống',
+            'email' => 'admin@gmail.com', // Cố định email để dễ đăng nhập
             'password' => Hash::make('123456'),
-            'role' => 'student',
+            'role' => 'admin',
         ]);
     }
 }
