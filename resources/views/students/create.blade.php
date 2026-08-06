@@ -1,3 +1,7 @@
+@extends('layouts.app')
+
+@section('content')
+
 <h2>Thêm sinh viên</h2>
 
 <form action="{{ route('students.store') }}" method="POST">
@@ -31,3 +35,4 @@
     <button type="submit">Lưu</button>
     <a href="{{ route('students.index') }}">Hủy</a>
 </form>
+@endsection
