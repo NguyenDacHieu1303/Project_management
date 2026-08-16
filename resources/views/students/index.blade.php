@@ -10,12 +10,12 @@
     </div>
 
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Tuyệt vời!</strong> {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>Tuyệt vời!</strong> {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     @endif
-    
+
     <div class="card shadow-sm">
         <div class="card-body">
             <div class="table-responsive">
@@ -37,7 +37,7 @@
                     <tbody>
                         @foreach($students as $student)
                         <tr>
-                            <td class="text-center">{{ $loop->iteration }}</td>
+                            <td class="text-center">{{ $students->firstItem() + $loop->index }}</td>
                             <td class="fw-bold">{{ $student->student_code }}</td>
                             <td>{{ $student->user->name }}</td>
                             <td>{{ $student->user->email }}</td>
@@ -62,6 +62,9 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div class="d-flex justify-content-end mt-3">
+                    {{ $students->links('pagination::bootstrap-5') }}
+                </div>
             </div>
         </div>
     </div>

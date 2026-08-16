@@ -27,7 +27,7 @@
                 <tbody>
                     @foreach($topics as $index => $topic)
                     <tr>
-                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $topics->firstItem() + $index }}</td>
                         <td>{{ $topic->title }}</td>
                         <td>{{ $topic->major }}</td>
                         <td>{{ $topic->semester }}</td>
@@ -53,6 +53,9 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="d-flex justify-content-end mt-3">
+                {{ $topics->links('pagination::bootstrap-5') }}
+            </div>
         </div>
     </div>
 </div>

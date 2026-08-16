@@ -16,7 +16,7 @@ class TopicController extends Controller
     public function index()
     {
         // Lấy tất cả đề tài từ Database, sắp xếp mới nhất lên đầu
-        $topics = Topic::orderBy('created_at', 'desc')->get();
+        $topics = Topic::orderBy('created_at', 'desc')->paginate(10);
         
         // Trả về view và ném biến $topics sang cho view xử lý hiển thị
         return view('topics.index', compact('topics'));

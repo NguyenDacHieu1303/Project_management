@@ -9,6 +9,13 @@ class TopicRegistration extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'student_id', 
+        'topic_id', 
+        'status', 
+        'registered_at'
+    ];
+
     public function student()
     {
         return $this->belongsTo(Student::class);
