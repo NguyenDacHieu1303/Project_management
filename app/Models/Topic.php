@@ -13,4 +13,10 @@ class Topic extends Model
     {
         return $this->hasOne(TopicAssignment::class);
     }
+
+      public function topicRegistrations()
+    {
+        return $this->hasMany(TopicRegistration::class);
+    }
 }
+  
