@@ -10,14 +10,13 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\Topic;
 use App\Models\TopicRegistration;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request; // Thêm thư viện Request để xử lý Form
+use Illuminate\Http\Request;
 
 class LecturerController extends Controller
 {
     // 1. Hiển thị danh sách Giảng viên
     public function index()
     {
-        // Lấy danh sách giảng viên kèm tài khoản User và đếm số bài đã phân công
         $lecturers = Lecturer::with('user')->withCount('topicAssignments as assignments_count')->latest()->paginate(10);
         return view('lecturer.index', compact('lecturers'));
     }
@@ -31,17 +30,14 @@ class LecturerController extends Controller
     // 3. Xử lý lưu Giảng viên mới
     public function store(StoreLecturerRequest $request)
     {
-        // Dùng Transaction: nếu 1 trong 2 bảng lỗi thì tự khôi phục, không sinh ra dữ liệu rác
         DB::transaction(function () use ($request) {
-            // Bước A: Tạo tài khoản đăng nhập cho giảng viên
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'password' => Hash::make('12345678'), // Mật khẩu mặc định
+                'password' => Hash::make('12345678'),
                 'role' => 'lecturer',
             ]);
 
-            // Bước B: Tạo hồ sơ thông tin Giảng viên
             Lecturer::create([
                 'user_id' => $user->id,
                 'lecturer_code' => $request->lecturer_code,
@@ -64,13 +60,11 @@ class LecturerController extends Controller
     public function update(StoreLecturerRequest $request, Lecturer $lecturer)
     {
         DB::transaction(function () use ($request, $lecturer) {
-            // Cập nhật thông tin User
             $lecturer->user->update([
                 'name' => $request->name,
                 'email' => $request->email,
             ]);
 
-            // Cập nhật thông tin Giảng viên
             $lecturer->update([
                 'lecturer_code' => $request->lecturer_code,
                 'specialization' => $request->specialization,
@@ -79,33 +73,34 @@ class LecturerController extends Controller
             ]);
         });
 
-        return redirect()->route('lecturer.index')->with('success', 'Cập nhật thông tin giảng viên thành công!');
+        return redirect()->route('lecturers.index')->with('success', 'Cập nhật thông tin giảng viên thành công!');
     }
 
     // 6. Xóa Giảng viên
     public function destroy(Lecturer $lecturer)
     {
-        // Xóa tài khoản User, bảng `lecturers` tự động xóa theo (nhờ quan hệ Foreign Key Cascade)
         $lecturer->user->delete();
-        return redirect()->route('lecturer.index')->with('success', 'Đã xóa giảng viên!');
+        return redirect()->route('lecturers.index')->with('success', 'Đã xóa giảng viên!');
     }
 
     // =====================================================
-    // TÍNH NĂNG DÀNH CHO GIẢNG VIÊN (ĐÃ SỬA LỖI LOGIC ID)
+    // TÍNH NĂNG DÀNH CHO GIẢNG VIÊN (QUẢN LÝ QUA BẢNG ASSIGNMENTS)
     // =====================================================
 
     // 1. Xem danh sách đề tài do giảng viên hướng dẫn
     public function topics()
     {
-        // Lấy đúng ID của Lecturer thay vì lấy nhầm ID của User
         $lecturer = Lecturer::where('user_id', Auth::id())->firstOrFail();
 
-        $topics = Topic::where('lecturer_id', $lecturer->id)
-                       ->with(['registrations' => function($q) {
-                           $q->where('status', 'Approved')->with('student.user');
-                       }])
-                       ->orderBy('created_at', 'desc')
-                       ->paginate(10);
+        // Sửa: Lấy qua bảng trung gian topic_assignments thay vì gọi lecturer_id ở bảng topics
+        $topics = Topic::whereHas('assignment', function($q) use ($lecturer) {
+                        $q->where('lecturer_id', $lecturer->id);
+                    })
+                    ->with(['registrations' => function($q) {
+                        $q->where('status', 'Approved')->with('student.user');
+                    }])
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(10);
 
         return view('lecturer.topics', compact('topics'));
     }
@@ -115,12 +110,13 @@ class LecturerController extends Controller
     {
         $lecturer = Lecturer::where('user_id', Auth::id())->firstOrFail();
 
-        $registrations = TopicRegistration::whereHas('topic', function($q) use ($lecturer) {
-                                $q->where('lecturer_id', $lecturer->id);
-                            })
-                            ->with(['topic', 'student.user'])
-                            ->orderBy('created_at', 'desc')
-                            ->paginate(10);
+        // Sửa: Lọc đề tài qua quan hệ assignment với giảng viên
+        $registrations = TopicRegistration::whereHas('topic.assignment', function($q) use ($lecturer) {
+                              $q->where('lecturer_id', $lecturer->id);
+                          })
+                          ->with(['topic', 'student.user'])
+                          ->orderBy('created_at', 'desc')
+                          ->paginate(10);
 
         return view('lecturer.registrations', compact('registrations'));
     }
@@ -130,12 +126,13 @@ class LecturerController extends Controller
     {
         $lecturer = Lecturer::where('user_id', Auth::id())->firstOrFail();
 
-        $registrations = TopicRegistration::whereHas('topic', function($q) use ($lecturer) {
-                                $q->where('lecturer_id', $lecturer->id);
-                            })
-                            ->where('status', 'Approved')
-                            ->with(['topic', 'student.user'])
-                            ->paginate(10);
+        // Sửa: Lọc bài nộp dựa trên đề tài do giảng viên này hướng dẫn
+        $registrations = TopicRegistration::whereHas('topic.assignment', function($q) use ($lecturer) {
+                              $q->where('lecturer_id', $lecturer->id);
+                          })
+                          ->where('status', 'Approved')
+                          ->with(['topic', 'student.user'])
+                          ->paginate(10);
 
         return view('lecturer.submissions', compact('registrations'));
     }

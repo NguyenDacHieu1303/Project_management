@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -57,17 +58,27 @@ class AuthController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'], 
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'student', // Đăng ký mặc định là sinh viên
+            'role' => 'student',
+        ]);
+
+        Student::create([
+            'user_id' => $user->id,
+            'student_code' => 'SV' . str_pad((string) (Student::max('id') + 1), 6, '0', STR_PAD_LEFT),
+            'class' => 'Chưa cập nhật',
+            'major' => 'Chưa cập nhật',
+            'course' => date('Y'),
+            'phone' => null,
         ]);
 
         Auth::login($user);
+
         return redirect('/')->with('success', 'Đăng ký thành công!');
     }
 }

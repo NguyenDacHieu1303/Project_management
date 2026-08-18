@@ -9,9 +9,28 @@ class Topic extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'title',
+        'description',
+        'major',
+        'semester',
+        'status',
+        'lecturer_id',
+    ];
+
     public function assignment()
     {
         return $this->hasOne(TopicAssignment::class);
+    }
+
+    public function lecturer()
+    {
+        return $this->belongsTo(Lecturer::class);
+    }
+
+    public function registrations()
+    {
+        return $this->hasMany(TopicRegistration::class);
     }
 
     public function topicRegistrations()

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('topic_id')->unique()->constrained('topics')->cascadeOnDelete();
             $table->foreignId('lecturer_id')->constrained('lecturers')->cascadeOnDelete();
+            $table->string('role')->default('Hướng dẫn chính');
             $table->timestamp('assigned_at')->useCurrent();
             $table->timestamps();
         });

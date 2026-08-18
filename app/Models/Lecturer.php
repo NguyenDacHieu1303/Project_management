@@ -26,4 +26,9 @@ class Lecturer extends Model
     {
         return $this->hasMany(TopicAssignment::class);
     }
+
+    public function topics()
+    {
+        return $this->hasMany(Topic::class);
+    }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\TopicRegistrationController;
@@ -23,6 +24,7 @@ Route::get('/login', function () {
 Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
 // Logic xử lý khi submit form Login
 Route::post('/login', function (Request $request) {
