@@ -34,19 +34,13 @@
 
                         {{-- MENU CHO ADMIN --}}
                         @if(Auth::user()->role === 'admin')
-                           <a href="{{ route('topics.index') }}" class="{{ request()->routeIs('topics.*') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'text-gray-600 hover:text-blue-600' }} transition">Đề tài</a>
-                            
-                            <a href="{{ route('students.index') }}" class="{{ request()->routeIs('students.*') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'text-gray-600 hover:text-blue-600' }} transition">Sinh viên</a>
-                            
-                            <a href="{{ route('lecturers.index') }}" class="{{ request()->routeIs('lecturers.*') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'text-gray-600 hover:text-blue-600' }} transition">Giảng viên</a>
-                            
-                            <a href="{{ route('assignments.index') }}" class="{{ request()->routeIs('assignments.*') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'text-gray-600 hover:text-blue-600' }} transition">Phân công GV</a>
-                            
-                            <a href="{{ route('topic-registrations.index') }}" class="{{ request()->routeIs('topic-registrations.*') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'text-gray-600 hover:text-blue-600' }} transition">Duyệt Đăng ký</a>
-                            
-                            <a href="{{ route('milestones.index') }}" class="{{ request()->routeIs('milestones.*') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'text-gray-600 hover:text-blue-600' }} transition">Mốc nộp bài</a>
-   
-                            <a href="{{ route('milestone-submissions.index') }}" class="{{ request()->routeIs('milestone-submissions.*') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'text-gray-600 hover:text-blue-600' }} transition">Bài nộp SV</a>
+                            <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'text-gray-600 hover:text-blue-600' }} transition">Trang chủ</a>
+
+                            <a href="{{ route('topics.index') }}" class="{{ request()->routeIs('topics.*') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'text-gray-600 hover:text-blue-600' }} transition">Quản lý Đề tài</a>
+
+                            <a href="{{ route('students.index') }}" class="{{ request()->routeIs('students.*') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'text-gray-600 hover:text-blue-600' }} transition">Quản lý Sinh viên</a>
+
+                            <a href="{{ route('assignments.index') }}" class="{{ request()->routeIs('assignments.*') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'text-gray-600 hover:text-blue-600' }} transition">Phân công Giảng viên</a>
                         {{-- MENU CHO GIẢNG VIÊN --}}
                         @elseif(Auth::user()->role === 'lecturer')
                             <a href="{{ route('lecturer.topics') }}" class="{{ request()->routeIs('lecturer.topics') ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'text-gray-600 hover:text-blue-600' }} transition">Đề tài hướng dẫn</a>
