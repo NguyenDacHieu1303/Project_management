@@ -46,7 +46,7 @@
 
                     @else
                         {{-- MENU CHO KHÁCH (CHƯA ĐĂNG NHẬP) --}}
-                        <a href="#" class="text-gray-600 hover:text-blue-600 transition">Tra cứu đề tài</a>
+                        <a href="{{ route('topics.index') }}" class="text-gray-600 hover:text-blue-600 transition">Tra cứu đề tài</a>
                         <a href="#" class="text-gray-600 hover:text-blue-600 transition">Lịch bảo vệ</a>
                         <a href="#" class="text-gray-600 hover:text-blue-600 transition">Hướng dẫn</a>
                     @endif
