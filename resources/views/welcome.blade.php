@@ -99,8 +99,12 @@
                         <a href="{{ route('topics.index') }}" class="bg-white text-blue-900 hover:bg-gray-100 px-6 py-3 rounded-lg font-bold shadow transition text-center">
                             Vào trang Quản trị Hệ thống
                         </a>
-                    @else
-                        <a href="#" class="bg-white text-blue-900 hover:bg-gray-100 px-6 py-3 rounded-lg font-bold shadow transition text-center">
+                    @elseif(Auth::user()->role === 'lecturer')
+                        <a href="{{ route('lecturer.topics') }}" class="bg-white text-blue-900 hover:bg-gray-100 px-6 py-3 rounded-lg font-bold shadow transition text-center">
+                            Bảng điều khiển của tôi
+                        </a>
+                    @elseif(Auth::user()->role === 'student')
+                        <a href="{{ route('topic-registrations.index') }}" class="bg-white text-blue-900 hover:bg-gray-100 px-6 py-3 rounded-lg font-bold shadow transition text-center">
                             Bảng điều khiển của tôi
                         </a>
                     @endif
