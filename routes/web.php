@@ -8,18 +8,69 @@ use App\Http\Controllers\LecturerController;
 use App\Http\Controllers\TopicAssignmentController;
 use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\MilestoneSubmissionController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-// 1. Trang chủ công khai
 Route::get('/', function () {
     return view('welcome');
 });
 
-// 2. Các route yêu cầu phải đăng nhập mới được truy cập
+// Giao diện Đăng nhập & Đăng ký
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
+
+Route::get('/register', function () {
+    return view('auth.register');
+})->name('register');
+
+// Logic xử lý khi submit form Login
+Route::post('/login', function (Request $request) {
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
+
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+        $user = Auth::user();
+
+        // Chuyển hướng theo Role
+        if ($user->role === 'admin') {
+            return redirect()->route('topics.index');
+        } elseif ($user->role === 'lecturer') {
+            return redirect()->route('lecturer.topics');
+        } else {
+            return redirect()->route('topics.index');
+        }
+    }
+
+    return back()->withErrors([
+        'email' => 'Email hoặc mật khẩu không chính xác.',
+    ])->onlyInput('email');
+});
+
+// Logic xử lý khi bấm nút Đăng xuất trên Navbar
+Route::post('/logout', function (Request $request) {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect('/');
+})->name('logout');
+
+
+// ==========================================
+// CÁC ROUTE YÊU CẦU ĐĂNG NHẬP
+// ==========================================
 Route::middleware(['auth'])->group(function () {
 
-    // Quản lý sinh viên & đề tài chung
+    // Quản lý sinh viên, đề tài & MỐC NỘP (Admin)
     Route::resource('students', StudentController::class);
     Route::resource('topics', TopicController::class);
+    
+    // Đã chuyển 2 dòng này ra ngoài, ngang hàng với topics
+    Route::resource('milestones', MilestoneController::class);
+    Route::resource('milestone-submissions', MilestoneSubmissionController::class);
 
     // Đăng ký đề tài của sinh viên
     Route::resource('topic-registrations', TopicRegistrationController::class)->only(['index', 'store']);
@@ -34,7 +85,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('assignments', [TopicAssignmentController::class, 'store'])->name('assignments.store');
     Route::delete('assignments/{assignment}', [TopicAssignmentController::class, 'destroy'])->name('assignments.destroy');
 
-    // Nhóm tính năng dành riêng cho GIẢNG VIÊN (Lecturer)
+    // ==========================================
+    // NHÓM DÀNH RIÊNG CHO GIẢNG VIÊN
+    // ==========================================
     Route::prefix('lecturer')->name('lecturer.')->group(function () {
         Route::get('/topics', [LecturerController::class, 'topics'])->name('topics');
         Route::get('/registrations', [LecturerController::class, 'registrations'])->name('registrations');

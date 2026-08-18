@@ -7,6 +7,10 @@ use App\Models\User;
 use App\Http\Requests\StoreLecturerRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Topic;
+use App\Models\TopicRegistration;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request; // Thêm thư viện Request để xử lý Form
 
 class LecturerController extends Controller
 {
@@ -84,5 +88,72 @@ class LecturerController extends Controller
         // Xóa tài khoản User, bảng `lecturers` tự động xóa theo (nhờ quan hệ Foreign Key Cascade)
         $lecturer->user->delete();
         return redirect()->route('lecturers.index')->with('success', 'Đã xóa giảng viên!');
+    }
+
+    // =====================================================
+    // TÍNH NĂNG DÀNH CHO GIẢNG VIÊN (ĐÃ SỬA LỖI LOGIC ID)
+    // =====================================================
+
+    // 1. Xem danh sách đề tài do giảng viên hướng dẫn
+    public function topics()
+    {
+        // Lấy đúng ID của Lecturer thay vì lấy nhầm ID của User
+        $lecturer = Lecturer::where('user_id', Auth::id())->firstOrFail();
+
+        $topics = Topic::where('lecturer_id', $lecturer->id)
+                       ->with(['registrations' => function($q) {
+                           $q->where('status', 'Approved')->with('student.user');
+                       }])
+                       ->orderBy('created_at', 'desc')
+                       ->paginate(10);
+
+        return view('lecturer.topics', compact('topics'));
+    }
+
+    // 2. Xem danh sách sinh viên đăng ký để duyệt
+    public function registrations()
+    {
+        $lecturer = Lecturer::where('user_id', Auth::id())->firstOrFail();
+
+        $registrations = TopicRegistration::whereHas('topic', function($q) use ($lecturer) {
+                                $q->where('lecturer_id', $lecturer->id);
+                            })
+                            ->with(['topic', 'student.user'])
+                            ->orderBy('created_at', 'desc')
+                            ->paginate(10);
+
+        return view('lecturer.registrations', compact('registrations'));
+    }
+
+    // 3. Xem danh sách bài nộp / tiến độ của sinh viên
+    public function studentSubmissions()
+    {
+        $lecturer = Lecturer::where('user_id', Auth::id())->firstOrFail();
+
+        $registrations = TopicRegistration::whereHas('topic', function($q) use ($lecturer) {
+                                $q->where('lecturer_id', $lecturer->id);
+                            })
+                            ->where('status', 'Approved')
+                            ->with(['topic', 'student.user'])
+                            ->paginate(10);
+
+        return view('lecturer.submissions', compact('registrations'));
+    }
+
+    // 4. Chấm điểm hoặc nhận xét bài nộp
+    public function storeEvaluation(Request $request, $registrationId)
+    {
+        $request->validate([
+            'score' => 'nullable|numeric|min:0|max:10',
+            'feedback' => 'nullable|string|max:1000',
+        ]);
+
+        $registration = TopicRegistration::findOrFail($registrationId);
+        
+        $registration->score = $request->score;
+        $registration->feedback = $request->feedback;
+        $registration->save();
+
+        return redirect()->back()->with('success', 'Đã cập nhật điểm và nhận xét thành công!');
     }
 }
