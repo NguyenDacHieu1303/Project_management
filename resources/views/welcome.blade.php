@@ -33,9 +33,9 @@
 
                         {{-- MENU CHO GIẢNG VIÊN --}}
                         @elseif(Auth::user()->role === 'lecturer')
-                            <a href="#" class="text-gray-600 hover:text-blue-600 transition">Đề tài hướng dẫn</a>
-                            <a href="#" class="text-gray-600 hover:text-blue-600 transition">Duyệt đăng ký</a>
-                            <a href="#" class="text-gray-600 hover:text-blue-600 transition">Chấm điểm & Đánh giá</a>
+                            <a href="{{ route('lecturer.topics') }}" class="text-gray-600 hover:text-blue-600 transition">Đề tài hướng dẫn</a>
+                            <a href="{{ route('lecturer.registrations') }}" class="text-gray-600 hover:text-blue-600 transition">Duyệt đăng ký</a>
+                            <a href="{{ route('lecturer.submissions') }}" class="text-gray-600 hover:text-blue-600 transition">Chấm điểm & Đánh giá</a>
 
                         {{-- MENU CHO SINH VIÊN --}}
                         @elseif(Auth::user()->role === 'student')
