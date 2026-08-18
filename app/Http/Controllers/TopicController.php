@@ -18,11 +18,13 @@ class TopicController extends Controller
         // Lấy tất cả đề tài từ Database, sắp xếp mới nhất lên đầu
         $query = Topic::orderBy('created_at', 'desc');
 
-        // Nếu có status=Open trên URL thì lọc
-        if ($request->query('filter') === 'Open') {
+        // Nếu có status=Open trên URL thì lọc (không phụ thuộc hoa/thường)
+        if (strtolower((string) $request->query('filter')) === 'open') {
             $query->where('status', 'Open');
         }
+
         $topics = $query->paginate(10);
+
         // Trả về view và ném biến $topics sang cho view xử lý hiển thị
         return view('topics.index', compact('topics'));
     }
