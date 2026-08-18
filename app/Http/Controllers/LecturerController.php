@@ -19,7 +19,7 @@ class LecturerController extends Controller
     {
         // Lấy danh sách giảng viên kèm tài khoản User và đếm số bài đã phân công
         $lecturers = Lecturer::with('user')->withCount('topicAssignments as assignments_count')->latest()->paginate(10);
-        return view('lecturers.index', compact('lecturers'));
+        return view('lecturer.index', compact('lecturers'));
     }
 
     // 2. Giao diện trang Thêm Giảng viên

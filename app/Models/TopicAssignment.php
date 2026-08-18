@@ -12,6 +12,7 @@ class TopicAssignment extends Model
     protected $fillable = [
         'topic_id',
         'lecturer_id',
+        'role',
         'assigned_at',
     ];
 
