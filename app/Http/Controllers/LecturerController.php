@@ -25,7 +25,7 @@ class LecturerController extends Controller
     // 2. Giao diện trang Thêm Giảng viên
     public function create()
     {
-        return view('lecturers.create');
+        return view('lecturer.create');
     }
 
     // 3. Xử lý lưu Giảng viên mới
@@ -57,7 +57,7 @@ class LecturerController extends Controller
     // 4. Giao diện Chỉnh sửa
     public function edit(Lecturer $lecturer)
     {
-        return view('lecturers.edit', compact('lecturer'));
+        return view('lecturer.edit', compact('lecturer'));
     }
 
     // 5. Xử lý Cập nhật thông tin
@@ -79,7 +79,7 @@ class LecturerController extends Controller
             ]);
         });
 
-        return redirect()->route('lecturers.index')->with('success', 'Cập nhật thông tin giảng viên thành công!');
+        return redirect()->route('lecturer.index')->with('success', 'Cập nhật thông tin giảng viên thành công!');
     }
 
     // 6. Xóa Giảng viên
@@ -87,7 +87,7 @@ class LecturerController extends Controller
     {
         // Xóa tài khoản User, bảng `lecturers` tự động xóa theo (nhờ quan hệ Foreign Key Cascade)
         $lecturer->user->delete();
-        return redirect()->route('lecturers.index')->with('success', 'Đã xóa giảng viên!');
+        return redirect()->route('lecturer.index')->with('success', 'Đã xóa giảng viên!');
     }
 
     // =====================================================
