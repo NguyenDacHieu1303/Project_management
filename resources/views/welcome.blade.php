@@ -40,7 +40,7 @@
                         {{-- MENU CHO SINH VIÊN --}}
                         @elseif(Auth::user()->role === 'student')
                             <a href="{{ route('topics.index') }}" class="text-gray-600 hover:text-blue-600 transition">Tra cứu đề tài</a>
-                            <a href="{{ route('topics.register-list') }}" class="text-gray-600 hover:text-blue-600 transition">Đăng ký đề tài</a>
+                            <a href="{{ route('topics.index', ['filter' => 'Open']) }}" class="text-gray-600 hover:text-blue-600 transition">Đăng ký đề tài</a>
                             <a href="{{ route('topic-registrations.index') }}" class="text-gray-600 hover:text-blue-600 transition">Đồ án của tôi</a>
                         @endif
 
