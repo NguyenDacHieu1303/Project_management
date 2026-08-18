@@ -11,24 +11,52 @@ class TopicRegistrationController extends Controller
 {
     // 1. Hàm hiển thị danh sách đơn đăng ký
     public function index()
-    {
-        // Dùng Eager Loading with(['student.user', 'topic']) để lấy luôn tên Sinh viên và tên Đề tài
-        $registrations = TopicRegistration::with(['student.user', 'topic'])
+{
+    $user = \Illuminate\Support\Facades\Auth::user();
+
+    // 1. Nếu là Sinh viên: CHỈ LẤY đơn của chính sinh viên đó
+    if ($user->role === 'student') {
+        $studentId = $user->student?->id;
+
+        if (!$studentId) {
+            return view('topic_registrations.index', ['registrations' => collect()]);
+        }
+
+        $registrations = \App\Models\TopicRegistration::where('student_id', $studentId)
+                            ->with(['topic'])
                             ->orderBy('created_at', 'desc')
                             ->paginate(10);
-
+                            
         return view('topic_registrations.index', compact('registrations'));
     }
+
+    // 2. Nếu là Admin hoặc Giảng viên: Lấy toàn bộ đơn kèm phân trang
+    $registrations = \App\Models\TopicRegistration::with(['topic', 'student.user'])
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(10);
+                        
+    return view('topic_registrations.index', compact('registrations'));
+}
 
     // 2. Hàm xử lý khi sinh viên bấm nút "Đăng ký"
     public function store(Request $request)
     {
         $request->validate([
             'topic_id' => 'required|exists:topics,id',
-            'student_id' => 'required|exists:students,id' 
         ]);
 
-        $studentId = $request->student_id;
+        $user = auth()->user();
+
+        if (!$user || $user->role !== 'student') {
+            return redirect()->back()->with('error', 'Chỉ sinh viên mới được đăng ký đề tài.');
+        }
+
+        $student = $user->student;
+        if (!$student) {
+            return redirect()->back()->with('error', 'Tài khoản của bạn chưa có hồ sơ sinh viên. Vui lòng liên hệ quản trị viên.');
+        }
+
+        $studentId = $student->id;
         $topicId = $request->topic_id;
 
         $hasActiveRegistration = TopicRegistration::where('student_id', $studentId)

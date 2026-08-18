@@ -24,23 +24,31 @@ class StudentSeeder extends Seeder
         // Tạo 50 sinh viên mẫu
         for ($i = 0; $i < 50; $i++) {
             DB::transaction(function () use ($faker) {
-                // 1. Tạo tài khoản User trước
-                $user = User::create([
-                    'name' => $faker->name(),
-                    'email' => $faker->unique()->safeEmail(),
-                    'password' => Hash::make('123456'), // Mật khẩu chung dễ test
-                    'role' => 'student',
-                ]);
+                $email = $faker->unique()->safeEmail();
+
+                // 1. Tạo hoặc lấy tài khoản User trước
+                $user = User::firstOrCreate(
+                    ['email' => $email],
+                    [
+                        'name' => $faker->name(),
+                        'password' => Hash::make('123456'),
+                        'role' => 'student',
+                    ]
+                );
 
                 // 2. Tạo hồ sơ Student tương ứng
-                Student::create([
-                    'user_id' => $user->id,
-                    'student_code' => $faker->unique()->numerify('225106####'),
-                    'class' => $faker->randomElement(['64CNTT1', '64CNTT2', '63HTTT', '63CNPM']),
-                    'major' => 'Công nghệ thông tin',
-                    'course' => 'K64',
-                    'phone' => $faker->phoneNumber(),
-                ]);
+                $studentCode = $faker->unique()->numerify('225106####');
+
+                Student::firstOrCreate(
+                    ['user_id' => $user->id],
+                    [
+                        'student_code' => $studentCode,
+                        'class' => $faker->randomElement(['64CNTT1', '64CNTT2', '63HTTT', '63CNPM']),
+                        'major' => 'Công nghệ thông tin',
+                        'course' => 'K64',
+                        'phone' => $faker->phoneNumber(),
+                    ]
+                );
             });
         }
     }

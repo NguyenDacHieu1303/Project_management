@@ -22,16 +22,15 @@ class TopicSeeder extends Seeder
         // Chuẩn bị sẵn các lựa chọn thực tế cho ngành IT của em
         $majors = ['Công nghệ phần mềm', 'Khoa học máy tính', 'Hệ thống thông tin', 'An toàn thông tin', 'Mạng máy tính'];
         $semesters = ['Học kỳ 1 - 2026', 'Học kỳ 2 - 2026', 'Học kỳ 1 - 2027', 'Học kỳ 2 - 2027'];
-        $statuses = ['Open', 'Assigned', 'Closed'];
 
-        // Vòng lặp tạo 20 đề tài
+        // Tất cả đề tài mẫu đều mở đăng ký để sinh viên có thể test chức năng đăng ký ngay trên trang chi tiết.
         for ($i = 0; $i < 20; $i++) {
             Topic::create([
-                'title' => 'Xây dựng hệ thống ' . $faker->catchPhrase, 
-                'description' => $faker->realText(200), // Random 1 đoạn văn khoảng 200 ký tự
-                'major' => $faker->randomElement($majors), // Bốc ngẫu nhiên 1 chuyên ngành
-                'semester' => $faker->randomElement($semesters), // Bốc ngẫu nhiên 1 học kỳ
-                'status' => $faker->randomElement($statuses), // Bốc ngẫu nhiên trạng thái
+                'title' => 'Xây dựng hệ thống ' . $faker->catchPhrase,
+                'description' => $faker->realText(200),
+                'major' => $faker->randomElement($majors),
+                'semester' => $faker->randomElement($semesters),
+                'status' => 'Open',
             ]);
         }
     }

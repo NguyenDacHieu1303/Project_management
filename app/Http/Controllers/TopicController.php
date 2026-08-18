@@ -13,11 +13,16 @@ class TopicController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         // Lấy tất cả đề tài từ Database, sắp xếp mới nhất lên đầu
-        $topics = Topic::orderBy('created_at', 'desc')->paginate(10);
-        
+        $query = Topic::orderBy('created_at', 'desc');
+
+        // Nếu có status=Open trên URL thì lọc
+        if ($request->query('filter') === 'Open') {
+            $query->where('status', 'Open');
+        }
+        $topics = $query->paginate(10);
         // Trả về view và ném biến $topics sang cho view xử lý hiển thị
         return view('topics.index', compact('topics'));
     }
@@ -43,7 +48,9 @@ class TopicController extends Controller
         //Kiểm tra dữ liệu đầu vào
         $request->validate([
             'title' => [
-                'required', 'string', 'max:255',
+                'required',
+                'string',
+                'max:255',
                 // Nghiệp vụ: Đề tài không được trùng tên trong cùng 1 học kỳ (semester)
                 Rule::unique('topics')->where(function ($query) use ($request) {
                     return $query->where('semester', $request->semester);
@@ -73,7 +80,10 @@ class TopicController extends Controller
      */
     public function show($id)
     {
-        //
+        $topic = \App\Models\Topic::findOrFail($id);
+
+        // Trả về view chi tiết và truyền biến $topic sang
+        return view('topics.show', compact('topic'));
     }
 
     /**
@@ -86,7 +96,7 @@ class TopicController extends Controller
     {
         // Tìm đề tài theo ID
         $topic = Topic::findOrFail($id);
-        
+
         // Trả về view form sửa
         return view('topics.edit', compact('topic'));
     }
@@ -104,10 +114,12 @@ class TopicController extends Controller
 
         $request->validate([
             'title' => [
-                'required', 'string', 'max:255',
+                'required',
+                'string',
+                'max:255',
                 Rule::unique('topics')->where(function ($query) use ($request) {
                     return $query->where('semester', $request->semester);
-                })->ignore($topic->id) 
+                })->ignore($topic->id)
             ],
             'description' => 'required|string',
             'major' => 'required|string|max:255',
@@ -135,5 +147,12 @@ class TopicController extends Controller
         $topic->delete();
 
         return redirect()->route('topics.index')->with('success', 'Xóa đề tài thành công!');
+    }
+    public function registerList()
+    {
+        $topics = Topic::where('status', 'Open')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+        return view('topics.register-list', compact('topics'));
     }
 }
