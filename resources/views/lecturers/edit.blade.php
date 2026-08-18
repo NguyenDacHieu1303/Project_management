@@ -40,8 +40,13 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Khoa / Bộ môn:</label>
-                            <input type="text" name="department" class="form-control" value="{{ old('department', $lecturer->department) }}">
+                            <label class="form-label fw-bold">Chuyên ngành:</label>
+                            <input type="text" name="specialization" class="form-control" value="{{ old('specialization', $lecturer->specialization) }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Số lượng sinh viên tối đa hướng dẫn:</label>
+                            <input type="number" name="quota" class="form-control" value="{{ old('quota', $lecturer->quota) }}" min="1" max="20" required>
                         </div>
 
                         <div class="mb-3">

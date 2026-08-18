@@ -39,8 +39,13 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Khoa / Bộ môn:</label>
-                            <input type="text" name="department" class="form-control" placeholder="Ví dụ: Công nghệ thông tin" value="{{ old('department') }}">
+                            <label class="form-label fw-bold">Chuyên ngành:</label>
+                            <input type="text" name="specialization" class="form-control" placeholder="Ví dụ: Công nghệ phần mềm" value="{{ old('specialization') }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Số lượng sinh viên tối đa hướng dẫn:</label>
+                            <input type="number" name="quota" class="form-control" placeholder="Ví dụ: 5" value="{{ old('quota', 5) }}" min="1" max="20" required>
                         </div>
 
                         <div class="mb-3">

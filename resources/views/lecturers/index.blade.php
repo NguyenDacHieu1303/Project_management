@@ -23,7 +23,8 @@
                         <th>Mã GV</th>
                         <th>Họ và tên</th>
                         <th>Email</th>
-                        <th>Khoa / Bộ môn</th>
+                        <th>Chuyên ngành</th>
+                        <th>Số SV tối đa</th>
                         <th>Số ĐT</th>
                         <th class="text-center" style="width: 150px;">Hành động</th>
                     </tr>
@@ -35,7 +36,8 @@
                         <td class="fw-bold text-primary">{{ $item->lecturer_code }}</td>
                         <td>{{ $item->user->name ?? $item->name }}</td>
                         <td>{{ $item->user->email ?? $item->email }}</td>
-                        <td>{{ $item->department ?? 'Chưa cập nhật' }}</td>
+                        <td>{{ $item->specialization ?? 'Chưa cập nhật' }}</td>
+                        <td class="text-center">{{ $item->quota ?? '-' }}</td>
                         <td>{{ $item->phone ?? 'N/A' }}</td>
                         <td class="text-center">
                             <a href="{{ route('lecturers.edit', $item->id) }}" class="btn btn-sm btn-warning">Sửa</a>
