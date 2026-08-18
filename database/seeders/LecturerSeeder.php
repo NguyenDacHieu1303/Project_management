@@ -24,7 +24,27 @@ class LecturerSeeder extends Seeder
         // Chuẩn bị danh sách chuyên ngành
         $specializations = ['Công nghệ phần mềm', 'Khoa học máy tính', 'Hệ thống thông tin', 'An toàn thông tin', 'Mạng máy tính'];
 
-        // Tạo 15 giảng viên mẫu
+        // Tạo Lecturer profile cho demo lecturer (do UserSeeder đã tạo User rồi)
+        $demoLecturerUser = User::firstOrCreate(
+            ['email' => 'giangvien@tlu.edu.vn'],
+            [
+                'name' => 'Thầy Nguyễn Văn A',
+                'password' => Hash::make('123456'),
+                'role' => 'lecturer',
+            ]
+        );
+
+        Lecturer::firstOrCreate(
+            ['user_id' => $demoLecturerUser->id],
+            [
+                'lecturer_code' => 'GV001',
+                'specialization' => 'Công nghệ phần mềm',
+                'quota' => 5,
+                'phone' => '0900000002',
+            ]
+        );
+
+        // Tạo 15 giảng viên mẫu ngẫu nhiên
         for ($i = 0; $i < 15; $i++) {
             DB::transaction(function () use ($faker, $specializations) {
                 // 1. Tạo tài khoản User trước
