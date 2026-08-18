@@ -14,11 +14,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        $this->call([
+            UserSeeder::class,                      // 1. Tạo tài khoản Admin
+            LecturerSeeder::class,                  // 2. Tạo 15 giảng viên
+            StudentSeeder::class,                   // 3. Tạo 50 sinh viên
+            TopicSeeder::class,                     // 4. Tạo 20 đề tài
+            TopicAssignmentSeeder::class,           // 5. Phân công giảng viên hướng dẫn
+            TopicRegistrationSeeder::class,         // 6. Sinh viên đăng ký đề tài
+            MilestoneSeeder::class,                 // 7. Tạo các mốc nộp cho mỗi đề tài
+            MilestoneSubmissionSeeder::class,       // 8. Sinh viên nộp bài cho các mốc
+        ]);
     }
 }
