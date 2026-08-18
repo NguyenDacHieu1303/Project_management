@@ -62,8 +62,8 @@
                             </a>
 
                             <!-- Đăng ký đề tài -->
-                            <a href="{{ route('topics.index', ['filter' => 'open']) }}"
-                                class="{{ request()->query('filter') == 'open' ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'text-gray-600 hover:text-blue-600' }} transition">
+                            <a href="{{ route('topics.index', ['filter' => 'Open']) }}"
+                                class="{{ strtolower((string) request()->query('filter')) == 'open' ? 'text-blue-600 font-bold border-b-2 border-blue-600 pb-1' : 'text-gray-600 hover:text-blue-600' }} transition">
                                 Đăng ký đề tài
                             </a>
 
