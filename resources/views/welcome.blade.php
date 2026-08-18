@@ -1,87 +1,6 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống Quản lý Đồ án - TLU</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-50 text-gray-800 font-sans">
+@extends('layouts.app')
 
-    <!-- 1. THANH ĐIỀU HƯỚNG (NAVBAR ĐỘNG) -->
-    <nav class="bg-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                
-                <!-- Logo -->
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">🏫</div>
-                    <span class="font-bold text-xl text-blue-900 tracking-tight">Hệ Thống Đồ Án</span>
-                </div>
-                
-                <!-- Khu vực Menu Động -->
-                <div class="hidden md:flex space-x-6 text-sm font-medium">
-                    <a href="{{ url('/') }}" class="text-blue-600 font-bold">Trang chủ</a>
-
-                    @if(Auth::check())
-
-                        {{-- MENU CHO ADMIN --}}
-                        @if(Auth::user()->role === 'admin')
-                            <a href="{{ route('topics.index') }}" class="text-gray-600 hover:text-blue-600 transition">Quản lý Đề tài</a>
-                            <a href="{{ route('students.index') }}" class="text-gray-600 hover:text-blue-600 transition">Quản lý Sinh viên</a>
-                            <a href="{{ route('assignments.index') }}" class="text-gray-600 hover:text-blue-600 transition">Phân công Giảng viên</a>
-
-                        {{-- MENU CHO GIẢNG VIÊN --}}
-                        @elseif(Auth::user()->role === 'lecturer')
-                            <a href="{{ route('lecturer.topics') }}" class="text-gray-600 hover:text-blue-600 transition">Đề tài hướng dẫn</a>
-                            <a href="{{ route('lecturer.registrations') }}" class="text-gray-600 hover:text-blue-600 transition">Duyệt đăng ký</a>
-                            <a href="{{ route('lecturer.submissions') }}" class="text-gray-600 hover:text-blue-600 transition">Chấm điểm & Đánh giá</a>
-
-                        {{-- MENU CHO SINH VIÊN --}}
-                        @elseif(Auth::user()->role === 'student')
-                            <a href="{{ route('topics.index') }}" class="text-gray-600 hover:text-blue-600 transition">Tra cứu đề tài</a>
-                            <a href="{{ route('topics.index', ['filter' => 'Open']) }}" class="text-gray-600 hover:text-blue-600 transition">Đăng ký đề tài</a>
-                            <a href="{{ route('topic-registrations.index') }}" class="text-gray-600 hover:text-blue-600 transition">Đồ án của tôi</a>
-                        @endif
-
-                    @else
-                        {{-- MENU CHO KHÁCH (CHƯA ĐĂNG NHẬP) --}}
-                        <a href="{{ route('topics.index') }}" class="text-gray-600 hover:text-blue-600 transition">Tra cứu đề tài</a>
-                        <a href="#" class="text-gray-600 hover:text-blue-600 transition">Lịch bảo vệ</a>
-                        <a href="#" class="text-gray-600 hover:text-blue-600 transition">Hướng dẫn</a>
-                    @endif
-                </div>
-                
-                <!-- Khu vực User / Đăng nhập / Đăng xuất -->
-                <div>
-                    @if(Auth::check())
-                        <div class="flex items-center space-x-4">
-                            <span class="text-sm font-semibold text-gray-700 hidden sm:block">
-                                Chào, {{ Auth::user()->name }}! 
-                                <span class="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full ml-1">{{ strtoupper(Auth::user()->role) }}</span>
-                            </span>
-                            <form action="{{ route('logout') }}" method="POST">
-                                @csrf
-                                <button type="submit" class="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg text-sm font-semibold transition border border-red-200">
-                                    Đăng xuất
-                                </button>
-                            </form>
-                        </div>
-                    @else
-                        <div class="flex space-x-3">
-                            <a href="{{ route('login') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition shadow-sm">
-                                Đăng nhập
-                            </a>
-                            <a href="{{ route('register') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-5 py-2 rounded-lg text-sm font-semibold transition border border-gray-200 hidden sm:block">
-                                Đăng ký
-                            </a>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </nav>
-
+@section('content')
     <!-- 2. HERO SECTION -->
     <header class="bg-gradient-to-r from-blue-900 to-indigo-800 text-white py-20 px-4 text-center">
         <div class="max-w-4xl mx-auto">
@@ -151,6 +70,4 @@
         <p>© 2026 Trung tâm Công nghệ Thông tin - Trường Đại Học Thủy Lợi</p>
         <p class="mt-1 text-xs text-gray-600">Hỗ trợ kỹ thuật: support@tlu.edu.vn | Hotline: 024.xxxx.xxxx</p>
     </footer>
-
-</body>
-</html>
+@endsection
