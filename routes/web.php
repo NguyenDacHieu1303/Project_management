@@ -33,16 +33,9 @@ Route::post('/login', function (Request $request) {
 
     if (Auth::attempt($credentials)) {
         $request->session()->regenerate();
-        $user = Auth::user();
 
-        // Chuyển hướng theo Role
-        if ($user->role === 'admin') {
-            return redirect()->route('topics.index');
-        } elseif ($user->role === 'lecturer') {
-            return redirect()->route('lecturer.topics');
-        } else {
-            return redirect()->route('topics.index');
-        }
+        // Mọi role đều về trang chủ trước, sau đó UI sẽ hiển thị menu tương ứng
+        return redirect('/');
     }
 
     return back()->withErrors([

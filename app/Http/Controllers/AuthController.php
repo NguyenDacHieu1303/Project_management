@@ -27,8 +27,7 @@ class AuthController extends Controller
         // Gọi Auth::attempt() để Laravel tự động kiểm tra DB
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            
-            // Đăng nhập thành công -> Tạm thời cho về trang chủ
+
             return redirect('/')->with('success', 'Đăng nhập thành công!');
         }
 
