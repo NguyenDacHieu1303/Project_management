@@ -24,7 +24,7 @@
                     <a href="{{ url('/') }}" class="text-blue-600 font-bold">Trang chủ</a>
 
                     @if(Auth::check())
-                        
+
                         {{-- MENU CHO ADMIN --}}
                         @if(Auth::user()->role === 'admin')
                             <a href="{{ route('topics.index') }}" class="text-gray-600 hover:text-blue-600 transition">Quản lý Đề tài</a>
