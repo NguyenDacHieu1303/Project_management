@@ -23,7 +23,7 @@ class TopicRegistrationController extends Controller
         }
 
         $registrations = \App\Models\TopicRegistration::where('student_id', $studentId)
-                            ->with(['topic'])
+                            ->with(['topic.assignment.lecturer.user'])
                             ->orderBy('created_at', 'desc')
                             ->paginate(10);
                             

@@ -27,14 +27,30 @@
                     <h5 class="fw-bold">Mô tả đề tài:</h5>
                     <p class="text-muted" style="white-space: pre-line;">{{ $topic->description ?? 'Chưa có mô tả chi tiết.' }}</p>
 
+                    {{-- Kiểm tra xem sinh viên đã có đơn nào Pending hoặc Approved chưa --}}
+                    @php
+                        $hasRegistered = false;
+                        if(Auth::check() && Auth::user()->role === 'student' && Auth::user()->student) {
+                            $hasRegistered = \App\Models\TopicRegistration::where('student_id', Auth::user()->student->id)
+                                ->whereIn('status', ['Pending', 'Approved'])
+                                ->exists();
+                        }
+                    @endphp
+
                     <!-- Nút đăng ký dành riêng cho Sinh viên -->
-                    @if(Auth::user()->role === 'student' && $topic->status == 'Open')
+                    @if(Auth::check() && Auth::user()->role === 'student' && $topic->status == 'Open')
                         <div class="mt-4">
-                            <form action="{{ route('topic-registrations.store') }}" method="POST" onsubmit="return confirm('Bạn xác nhận muốn đăng ký đề tài này?');">
-                                @csrf
-                                <input type="hidden" name="topic_id" value="{{ $topic->id }}">
-                                <button type="submit" class="btn btn-success btn-lg w-100 fw-bold">Đăng ký Đề tài này ngay</button>
-                            </form>
+                            @if($hasRegistered)
+                                <div class="alert alert-secondary text-center fw-bold py-3 mb-0">
+                                    Bạn đang có đề tài chờ duyệt hoặc đã được duyệt. Không thể đăng ký thêm đề tài này!
+                                </div>
+                            @else
+                                <form action="{{ route('topic-registrations.store') }}" method="POST" onsubmit="return confirm('Bạn xác nhận muốn đăng ký đề tài này?');">
+                                    @csrf
+                                    <input type="hidden" name="topic_id" value="{{ $topic->id }}">
+                                    <button type="submit" class="btn btn-success btn-lg w-100 fw-bold">Đăng ký Đề tài này ngay</button>
+                                </form>
+                            @endif
                         </div>
                     @endif
                 </div>
