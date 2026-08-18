@@ -28,4 +28,9 @@ class Student extends Model
     {
         return $this->hasMany(TopicRegistration::class);
     }
+
+    public function milestoneSubmissions()
+    {
+        return $this->hasMany(MilestoneSubmission::class);
+    }
 }

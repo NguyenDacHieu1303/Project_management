@@ -6,6 +6,8 @@ use App\Http\Controllers\TopicController;
 use App\Http\Controllers\TopicRegistrationController;
 use App\Http\Controllers\LecturerController;
 use App\Http\Controllers\TopicAssignmentController;
+use App\Http\Controllers\MilestoneController;
+use App\Http\Controllers\MilestoneSubmissionController;
 
 
 Route::resource('students', StudentController::class);
@@ -27,4 +29,10 @@ Route::get('/', function () {
     Route::get('assignments/create', [TopicAssignmentController::class, 'create'])->name('assignments.create');
     Route::post('assignments', [TopicAssignmentController::class, 'store'])->name('assignments.store');
     Route::delete('assignments/{assignment}', [TopicAssignmentController::class, 'destroy'])->name('assignments.destroy');
+
+    // Quản lý Mốc Nộp
+    Route::resource('milestones', MilestoneController::class);
+
+    // Quản lý Bài Nộp Mốc
+    Route::resource('milestone-submissions', MilestoneSubmissionController::class);
 

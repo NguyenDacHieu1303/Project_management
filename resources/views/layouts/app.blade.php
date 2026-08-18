@@ -46,6 +46,20 @@
                             Đơn đăng ký Đề tài
                         </a>
                     </li>
+
+                    <!-- 5. Link tới trang Mốc Nộp -->
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('milestones.*') ? 'active fw-bold text-white' : '' }}" href="{{ route('milestones.index') }}">
+                            Quản lý Mốc Nộp
+                        </a>
+                    </li>
+
+                    <!-- 6. Link tới trang Bài Nộp Mốc -->
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('milestone-submissions.*') ? 'active fw-bold text-white' : '' }}" href="{{ route('milestone-submissions.index') }}">
+                            Bài Nộp Mốc
+                        </a>
+                    </li>
                     
                 </ul>
             </div>
