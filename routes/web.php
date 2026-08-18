@@ -67,6 +67,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('milestones', MilestoneController::class);
     Route::resource('milestone-submissions', MilestoneSubmissionController::class);
 
+    Route::get('/student/milestones', [MilestoneSubmissionController::class, 'index'])->name('student.milestones');
+    Route::post('/student/milestones/{milestoneId}/submit', [MilestoneSubmissionController::class, 'store'])->name('student.milestones.submit');
+
     // Đăng ký đề tài của sinh viên
     Route::resource('topic-registrations', TopicRegistrationController::class)->only(['index', 'store']);
     Route::put('topic-registrations/{id}/update-status', [TopicRegistrationController::class, 'updateStatus'])->name('topic-registrations.update_status');

@@ -6,7 +6,7 @@
         <h2>Danh sách Đề tài (Tra cứu)</h2>
         
         <!-- Chỉ Admin mới có nút Thêm đề tài -->
-        @if(Auth::user()->role === 'admin')
+        @if(Auth::check() && Auth::user()->role === 'admin')
             <a href="{{ route('topics.create') }}" class="btn btn-primary">Thêm Đề tài mới</a>
         @endif
     </div>
@@ -24,6 +24,16 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
+
+    {{-- Kiểm tra xem sinh viên hiện tại đã có đơn nào Pending hoặc Approved chưa --}}
+    @php
+        $hasRegistered = false;
+        if(Auth::check() && Auth::user()->role === 'student' && Auth::user()->student) {
+            $hasRegistered = \App\Models\TopicRegistration::where('student_id', Auth::user()->student->id)
+                ->whereIn('status', ['Pending', 'Approved'])
+                ->exists();
+        }
+    @endphp
 
     <div class="card shadow-sm">
         <div class="card-body p-0">
@@ -58,8 +68,9 @@
                             
                             <!-- 1. Nút Xem chi tiết: Ai cũng bấm vào được để đọc thông tin -->
                             <a href="{{ route('topics.show', $topic->id) }}" class="btn btn-sm btn-info text-white">Xem chi tiết</a>
+                            
                             <!-- 2. Nút của ADMIN: Sửa / Xóa -->
-                            @if(Auth::user()->role === 'admin')
+                            @if(Auth::check() && Auth::user()->role === 'admin')
                                 <a href="{{ route('topics.edit', $topic->id) }}" class="btn btn-sm btn-warning">Sửa</a>
 
                                 <form action="{{ route('topics.destroy', $topic->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đề tài này?');">
@@ -69,7 +80,18 @@
                                 </form>
                             @endif
 
-                            <!-- LƯU Ý: Đã lược bỏ nút Đăng ký ở đây. Sinh viên phải bấm "Xem chi tiết" để sang trang riêng mới thấy nút đăng ký! -->
+                            <!-- 3. Xử lý nút Đăng ký trực tiếp cho SINH VIÊN (tùy chọn nếu muốn hiện ngay ở đây) -->
+                            @if(Auth::check() && Auth::user()->role === 'student' && $topic->status === 'Open')
+                                @if($hasRegistered)
+                                    <span class="badge bg-secondary ms-1">Đã có đề tài</span>
+                                @else
+                                    <form action="{{ route('topic-registrations.store') }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn xác nhận đăng ký đề tài này?');">
+                                        @csrf
+                                        <input type="hidden" name="topic_id" value="{{ $topic->id }}">
+                                        <button type="submit" class="btn btn-sm btn-success ms-1">Đăng ký ngay</button>
+                                    </form>
+                                @endif
+                            @endif
 
                         </td>
                     </tr>
