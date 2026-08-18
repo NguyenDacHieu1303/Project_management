@@ -1,64 +1,98 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống Quản lý Đồ án</title>
-    <!-- Nhúng CSS Bootstrap 5 -->
+    <title>Hệ thống Quản lý Đồ án - TLU</title>
+    
+    <!-- 1. Nhúng Bootstrap 5 (Để giữ form/table của các trang bên trong không bị vỡ) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- 2. Nhúng Tailwind CSS (Để giữ thanh Navbar đẹp y hệt trang chủ) -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-light">
+<body class="bg-gray-50 text-gray-800 font-sans">
 
-    <!-- Thanh Điều hướng (Navbar) -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-        <div class="container">
-            <!-- 1. Sửa link Brand: Trỏ về trang chủ url('/') và set màu text-light để không bị chói -->
-            <a class="navbar-brand {{ request()->is('/') ? 'text-white fw-bold' : 'text-light' }}" href="{{ url('/') }}">
-                Hệ thống Quản lý
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    
-                    <!-- 2. Link tới trang Sinh viên: Đã thêm logic kiểm tra route -->
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('students.*') ? 'active fw-bold text-white' : '' }}" href="{{ route('students.index') }}">
-                            Quản lý Sinh viên
-                        </a>
-                    </li>
-                    
-                    <!-- 3. Link tới trang Đề tài: Đã thêm logic kiểm tra route -->
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('topics.*') ? 'active fw-bold text-white' : '' }}" href="{{ route('topics.index') }}">
-                            Quản lý Đề tài
-                        </a>
-                    </li>
-                    
-                    <!-- 4. Link tới trang đăng kí đề tài: Đồng bộ class hiển thị -->
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('topic-registrations.*') ? 'active fw-bold text-white' : '' }}" href="{{ route('topic-registrations.index') }}">
-                            Đơn đăng ký Đề tài
-                        </a>
-                    </li>
-                    
-                </ul>
+    <!-- THANH ĐIỀU HƯỚNG (Đồng bộ y hệt trang chủ) -->
+    <nav class="bg-white shadow-md sticky top-0 z-50 mb-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">🏫</div>
+                    <span class="font-bold text-xl text-blue-900 tracking-tight">Hệ Thống Đồ Án</span>
+                </div>
+                
+                <!-- Khu vực Menu Động -->
+                <div class="hidden md:flex space-x-6 text-sm font-medium">
+                    <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-blue-600' }} transition">Trang chủ</a>
+
+                    @if(Auth::check())
+                        
+                        {{-- MENU CHO ADMIN --}}
+                        @if(Auth::user()->role === 'admin')
+                            <a href="{{ route('topics.index') }}" class="{{ request()->routeIs('topics.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-blue-600' }} transition">Quản lý Đề tài</a>
+                            <a href="{{ route('students.index') }}" class="{{ request()->routeIs('students.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-blue-600' }} transition">Quản lý Sinh viên</a>
+                            <a href="{{ route('topic-registrations.index') }}" class="{{ request()->routeIs('topic-registrations.*') ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-blue-600' }} transition">Đơn đăng ký</a>
+
+                        {{-- MENU CHO GIẢNG VIÊN --}}
+                        @elseif(Auth::user()->role === 'lecturer')
+                            <a href="#" class="text-gray-600 hover:text-blue-600 transition">Đề tài hướng dẫn</a>
+                            <a href="#" class="text-gray-600 hover:text-blue-600 transition">Duyệt đăng ký</a>
+
+                        {{-- MENU CHO SINH VIÊN --}}
+                        @elseif(Auth::user()->role === 'student')
+                            <a href="#" class="text-gray-600 hover:text-blue-600 transition">Tra cứu đề tài</a>
+                            <a href="#" class="text-gray-600 hover:text-blue-600 transition">Đăng ký đề tài</a>
+                            <a href="#" class="text-gray-600 hover:text-blue-600 transition">Đồ án của tôi</a>
+                        @endif
+
+                    @endif
+                </div>
+                
+                <!-- Khu vực User / Đăng xuất -->
+                <div>
+                    @if(Auth::check())
+                        <div class="flex items-center space-x-4">
+                            <span class="text-sm font-semibold text-gray-700 hidden sm:block">
+                                Chào, {{ Auth::user()->name }}! 
+                                <span class="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full ml-1">{{ strtoupper(Auth::user()->role) }}</span>
+                            </span>
+                            <form action="{{ route('logout') }}" method="POST" class="m-0">
+                                @csrf
+                                <button type="submit" class="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg text-sm font-semibold transition border border-red-200">
+                                    Đăng xuất
+                                </button>
+                            </form>
+                        </div>
+                    @else
+                        <div class="flex space-x-3">
+                            <a href="{{ route('login') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition shadow-sm">
+                                Đăng nhập
+                            </a>
+                        </div>
+                    @endif
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- Nơi chứa nội dung của từng trang -->
-    <main>
+    <!-- Nơi chứa nội dung của từng trang (Danh sách, Form thêm sửa xóa...) -->
+    <main class="container mt-4">
+        <!-- Thông báo thành công -->
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         @yield('content')
     </main>
 
     <!-- Nhúng JS Bootstrap 5 -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
