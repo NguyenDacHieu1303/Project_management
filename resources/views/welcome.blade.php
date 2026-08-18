@@ -28,8 +28,8 @@
                         {{-- MENU CHO ADMIN --}}
                         @if(Auth::user()->role === 'admin')
                             <a href="{{ route('topics.index') }}" class="text-gray-600 hover:text-blue-600 transition">Quản lý Đề tài</a>
-                            <a href="#" class="text-gray-600 hover:text-blue-600 transition">Quản lý Sinh viên</a>
-                            <a href="#" class="text-gray-600 hover:text-blue-600 transition">Phân công Giảng viên</a>
+                            <a href="{{ route('students.index') }}" class="text-gray-600 hover:text-blue-600 transition">Quản lý Sinh viên</a>
+                            <a href="{{ route('assignments.index') }}" class="text-gray-600 hover:text-blue-600 transition">Phân công Giảng viên</a>
 
                         {{-- MENU CHO GIẢNG VIÊN --}}
                         @elseif(Auth::user()->role === 'lecturer')
